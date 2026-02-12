@@ -9,6 +9,10 @@ export const notificationService = {
   async getAll(): Promise<Notification[]> {
     try {
       const response = await api.get<Notification[]>("/notifications");
+      console.log(
+        "Notificações listadas com sucesso no service:",
+        response.data,
+      );
       return response.data;
     } catch (error) {
       console.error("Erro ao listar notificações:", error);
@@ -29,4 +33,6 @@ export const notificationService = {
       throw error;
     }
   },
+
+  // PATCH - Marcar uma notificação como lida
 };
