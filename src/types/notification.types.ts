@@ -1,4 +1,4 @@
-enum NotificationStatus {
+export enum NotificationStatus {
   SENT = "sent",
   PENDING = "pending",
   FAILED = "failed",

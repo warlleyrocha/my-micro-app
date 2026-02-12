@@ -3,6 +3,7 @@ import { notificationService } from "../services/notification.service";
 import {
   Notification,
   NotificationPostRequest,
+  NotificationStatus,
 } from "../types/notification.types";
 
 interface UseNotificationReturn {
@@ -12,6 +13,10 @@ interface UseNotificationReturn {
   fetchNotifications: () => Promise<void>;
   createNotification: (
     data: NotificationPostRequest,
+  ) => Promise<Notification | null>;
+  updatedStatusNotification: (
+    id: string,
+    status: NotificationStatus,
   ) => Promise<Notification | null>;
 }
 
@@ -62,11 +67,40 @@ export const useNotification = (): UseNotificationReturn => {
     [],
   );
 
+  // PATCH - Atualiza status da notificação
+  const updatedStatusNotification = useCallback(
+    async (
+      id: string,
+      status: NotificationStatus,
+    ): Promise<Notification | null> => {
+      setLoading(true);
+      setError(null);
+      try {
+        const updatedNotification =
+          await notificationService.updateStatusNotification({ id, status });
+        setNotifications((prev) =>
+          prev.map((notif) => (notif.id === id ? updatedNotification : notif)),
+        );
+        return updatedNotification;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Erro ao atualizar notificação";
+        setError(errorMessage);
+        console.error("Erro:", err);
+        return null;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
+
   return {
     notifications,
     loading,
     error,
     fetchNotifications,
     createNotification,
+    updatedStatusNotification,
   };
 };
